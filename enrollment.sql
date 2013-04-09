@@ -10,5 +10,6 @@ create table enrinfo (
   date text not null,
   seatlimit integer not null,
   enrolled integer not null,
-  waitlist integer not null
+  waitlist integer not null,
+  foreign key (ccn) references courses(ccn)
 );

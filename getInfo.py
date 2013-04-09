@@ -16,14 +16,14 @@ def search_dept(dept):
     # get the total rows so we can keep searching
     soup = BeautifulSoup(r.text)
     tables = soup.find_all('table')
-    a = tables[0].find_all('tr')[1].find_all('td')[1].br.a
+    a = tables[0].find_all('tr')[1].find_all('td')[1].a
     if a:
         # use regex to get the total rows out of the 'see next results' link
-        match = re.search('p_total_rows=\d+', str(a['href'])
+        match = re.search('p_total_rows=\d+', str(a['href']))
         if match:
             totalrows = int(match.group().split('=')[1])
             # each page displays 100 rows (sections); index starts with 1, not 0
-            for i in range(1, (totalrows/100)):
+            for i in range(1, ((totalrows/100)+1)):
                 payload['p_start_row'] = str(100*i + 1)
                 r = requests.get('http://osoc.berkeley.edu/OSOC/osoc',
                                  params=payload)
@@ -41,7 +41,9 @@ def analyze_html(txt):
 
         title = rows[0].find_all('td')[2].b.string.strip()
         ccn = rows[5].find_all('td')[1].tt.contents[0].strip()
-        if not ccn:
+        try:
+            check = int(ccn)
+        except ValueError:
             continue
 
         enrollinfo = rows[10].find_all('td')
