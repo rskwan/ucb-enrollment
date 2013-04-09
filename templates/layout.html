@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>UC Berkeley Enrollment Information API</title>
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <script type="text/javascript" href="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-name">UC Berkeley Enrollment Information API</h1>
+      </div>
+      {% block content %}
+      {% endblock %}
+    </div>
+  </body>
+
+</html>
