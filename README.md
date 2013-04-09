@@ -1,7 +1,9 @@
-ucb-enrollment
-==============
+UC Berkeley Enrollment Information: Scraper and API
+==================================================
 
-Tool for scraping enrollment information from the UCB Online Schedule of Classes.
+Tools for scraping enrollment information from the UC Berkeley [Online Schedule
+of Classes](http://schedule.berkeley.edu) and providing an API for accessing
+this data once stored.
 
 ## Requirements
 
@@ -28,6 +30,6 @@ Initialize the SQLite3 database as `enrollment.db` using the schema in
 
     sqlite3 enrollment.db < enrollment.sql
 
-Running `python getInfo.py` will get the information for the fall 2013 courses
+Running `python getInfo.py` will get the information for the Fall 2013 courses
 and store them in the database `enrollment.db`. `python api.py` will start
 Flask and provide access to an API for the data.
