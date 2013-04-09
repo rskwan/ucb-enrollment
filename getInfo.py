@@ -1,7 +1,7 @@
 import re, requests, sqlite3
 from bs4 import BeautifulSoup
 from datetime import datetime
-from dbaccess import insert_sect
+from dbaccess import insert_sect, insert_nonint_sect
 from depts import depts
 
 def search_dept(dept):
@@ -43,8 +43,9 @@ def analyze_html(txt):
         ccn = rows[5].find_all('td')[1].tt.contents[0].strip()
         try:
             check = int(ccn)
+            isint = True
         except ValueError:
-            continue
+            isint = False
 
         enrollinfo = rows[10].find_all('td')
         enrollnums = enrollinfo[1].tt.string.split()[:3]
@@ -59,7 +60,10 @@ def analyze_html(txt):
         except ValueError:
             continue
 
-        insert_sect(title, ccn, dt, data)
+        if isint:
+            insert_sect(title, ccn, dt, data)
+        else:
+            insert_nonint_sect(title, dt, data)
 
 def get_datetime(date):
     return datetime.strptime(date, '%m/%d/%y')

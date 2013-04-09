@@ -16,6 +16,25 @@ def insert_sect(title, ccn, dt, data):
     conn.commit()
     conn.close()
 
+def insert_nonint_sect(title, dt, data):
+    date = str(dt.date())
+    conn = sqlite3.connect('nonintenr.db')
+    c = conn.cursor()
+    check = c.execute('select * from courses where title=?', [title]).fetchall()
+    if len(check) == 0:
+        check = c.execute('insert into courses (title) values (?)', [title]).fetchall()
+        cid = c.lastrowid
+    else:
+        cid = check[0][0]
+    check2 = c.execute('select * from enrinfo where id=? and date=?',
+                       [cid, date]).fetchall()
+    if len(check2) == 0:
+        c.execute('insert into enrinfo values (?, ?, ?, ?, ?)',
+                  [cid, date, data['seatlimit'], data['enrolled'],
+                   data['waitlist']])
+    conn.commit()
+    conn.close()
+
 def get_course_map():
     courses = {}
     conn = sqlite3.connect('enrollment.db')

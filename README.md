@@ -10,6 +10,7 @@ this data once stored.
 * Python 2.7.x
 * pip
 * virtualenv
+* SQLite 3.x
 
 The contents of `requirements.txt`:
 
@@ -26,10 +27,12 @@ The contents of `requirements.txt`:
 ## Usage
 
 Initialize the SQLite3 database as `enrollment.db` using the schema in
-`enrollment.sql`:
+`enrollment.sql`, and the database for classes with their CCN not shown
+on the schedule as `nonintenr.db` with the schema in `nonintenr.sql`:
 
     sqlite3 enrollment.db < enrollment.sql
+    sqlite3 nonintenr.db < nonintenr.sql
 
 Running `python getInfo.py` will get the information for the Fall 2013 courses
-and store them in the database `enrollment.db`. `python api.py` will start
-Flask and provide access to an API for the data.
+and store them in the databases. `python api.py` will start Flask and provide
+access to an API for the data.
