@@ -1,5 +1,6 @@
-import re, requests
+import re, requests, sqlite3
 from bs4 import BeautifulSoup
+from datetime import datetime
 # from depts import depts
 
 depts = ['MATH']
@@ -51,18 +52,36 @@ def analyze_html(txt):
         enrollinfo = rows[10].find_all('td')
         enrollnums = enrollinfo[1].tt.string.split()[:3]
         date = enrollinfo[0].b.string.split()[2][:-1]
-
+        dt = get_datetime(date)
+        
         data = {}
-        data['limit'] = int(enrollnums[0][6:])
+        data['seatlimit'] = int(enrollnums[0][6:])
         data['enrolled'] = int(enrollnums[1][9:])
         data['waitlist'] = int(enrollnums[2][9:])
 
         # do something with the info
-        show_section(title, ccn, date, data)
+        show_section(title, ccn, dt, data)
+        insert_sect(title, ccn, dt, data)
 
-def show_section(title, ccn, date, data):
+def get_datetime(date):
+    return datetime.strptime(date, '%m/%d/%y')
+
+def insert_sect(title, ccn, dt, data):
+    date = str(dt.date())
+    conn = sqlite3.connect('enrollment.db')
+    c = conn.cursor()
+    check = c.execute('select ccn from courses where ccn=?', [ccn]).fetchall()
+    if len(check) == 0:
+        c.execute('insert into courses values (?, ?)', [ccn, title])
+    c.execute('insert into enrinfo values (?, ?, ?, ?, ?)',
+              [ccn, date, data['seatlimit'], data['enrolled'], data['waitlist']])
+    conn.commit()
+    conn.close()
+
+def show_section(title, ccn, dt, data):
+    date = dt.date()
     out = str(title).strip() + " (CCN " + str(ccn).strip() + "): Limit "
-    out += str(data['limit']) + ", Enrolled " + str(data['enrolled'])
+    out += str(data['seatlimit']) + ", Enrolled " + str(data['enrolled'])
     out += ", Waitlist " + str(data['waitlist']) + " (" + str(date) + ")"
     print out
 
