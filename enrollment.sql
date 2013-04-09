@@ -1,12 +1,12 @@
 drop table if exists courses;
 create table courses (
-  ccn integer primary key,
+  ccn text primary key,
   title text not null
 );
 
 drop table if exists enrinfo;
 create table enrinfo (
-  ccn integer not null,
+  ccn text not null,
   date text not null,
   seatlimit integer not null,
   enrolled integer not null,

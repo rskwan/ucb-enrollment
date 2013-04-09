@@ -34,7 +34,7 @@ class PhaseDates(Resource):
     def get(self):
         return self.phase_dates
 
-api.add_resource(EnrollInfo, '/enrollment/<int:ccn>')
+api.add_resource(EnrollInfo, '/<string:ccn>')
 api.add_resource(CourseMap, '/courses')
 api.add_resource(PhaseDates, '/phases')
 

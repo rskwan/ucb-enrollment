@@ -7,8 +7,12 @@ def insert_sect(title, ccn, dt, data):
     check = c.execute('select ccn from courses where ccn=?', [ccn]).fetchall()
     if len(check) == 0:
         c.execute('insert into courses values (?, ?)', [ccn, title])
-    c.execute('insert into enrinfo values (?, ?, ?, ?, ?)',
-              [ccn, date, data['seatlimit'], data['enrolled'], data['waitlist']])
+    check2 = c.execute('select * from enrinfo where ccn=? and date=?',
+                       [ccn, date]).fetchall()
+    if len(check2) == 0:
+        c.execute('insert into enrinfo values (?, ?, ?, ?, ?)',
+                  [ccn, date, data['seatlimit'], data['enrolled'],
+                   data['waitlist']])
     conn.commit()
     conn.close()
 

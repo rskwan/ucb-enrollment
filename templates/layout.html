@@ -3,15 +3,26 @@
   <head>
     <title>UC Berkeley Enrollment Information API</title>
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+    <style>
+      body { font-family: 'Open Sans', sans-serif; font-weight: 400; }
+      h1, h2, h3, h4, h5, h6 { font-weight: 700; }
+    </style>
     <script type="text/javascript" href="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
   </head>
   <body>
     <div class="container">
       <div class="page-header">
-        <h1 class="page-name">UC Berkeley Enrollment Information API</h1>
+        <h1 class="text-center page-name">UC Berkeley Enrollment Information API</h1>
       </div>
       {% block content %}
       {% endblock %}
+      <hr>
+    </div>
+    <div class="footer">
+      <div class="container">
+	<p class="text-center muted">Made by <a href="http://www.ocf.berkeley.edu/~rkwan/">Ronald Kwan</a>.</p>
+      </div>
     </div>
   </body>
 

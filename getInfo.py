@@ -16,19 +16,18 @@ def search_dept(dept):
     # get the total rows so we can keep searching
     soup = BeautifulSoup(r.text)
     tables = soup.find_all('table')
-
-    # this is the 'see next results' link
-    nextlink = str(tables[0].find_all('tr')[1].find_all('td')[1].br.a['href'])
-
-    # use regex to get the total rows out
-    match = re.search('p_total_rows=\d+', nextlink)
-    totalrows = int(match.group().split('=')[1])
-
-    # each page displays 100 rows (sections); index starts with 1, not 0
-    for i in range(1, (totalrows/100)):
-        payload['p_start_row'] = str(100*i + 1)
-        r = requests.get('http://osoc.berkeley.edu/OSOC/osoc', params=payload)
-        analyze_html(r.text)
+    a = tables[0].find_all('tr')[1].find_all('td')[1].br.a
+    if a:
+        # use regex to get the total rows out of the 'see next results' link
+        match = re.search('p_total_rows=\d+', str(a['href'])
+        if match:
+            totalrows = int(match.group().split('=')[1])
+            # each page displays 100 rows (sections); index starts with 1, not 0
+            for i in range(1, (totalrows/100)):
+                payload['p_start_row'] = str(100*i + 1)
+                r = requests.get('http://osoc.berkeley.edu/OSOC/osoc',
+                                 params=payload)
+                analyze_html(r.text)
 
 def analyze_html(txt):
     soup = BeautifulSoup(txt)
@@ -41,35 +40,28 @@ def analyze_html(txt):
         rows = section.find_all('tr')
 
         title = rows[0].find_all('td')[2].b.string.strip()
-        ccn = rows[5].find_all('td')[1].tt.contents[0]
-        try:
-            ccn = int(ccn)
-        except ValueError:
-            # sections with non-integer CCNs usually don't have enrollment info
+        ccn = rows[5].find_all('td')[1].tt.contents[0].strip()
+        if not ccn:
             continue
 
         enrollinfo = rows[10].find_all('td')
         enrollnums = enrollinfo[1].tt.string.split()[:3]
         date = enrollinfo[0].b.string.split()[2][:-1]
         dt = get_datetime(date)
-        
-        data = {}
-        data['seatlimit'] = int(enrollnums[0][6:])
-        data['enrolled'] = int(enrollnums[1][9:])
-        data['waitlist'] = int(enrollnums[2][9:])
 
-        show_section(title, ccn, dt, data)
+        data = {}
+        try:
+            data['seatlimit'] = int(enrollnums[0][6:])
+            data['enrolled'] = int(enrollnums[1][9:])
+            data['waitlist'] = int(enrollnums[2][9:])
+        except ValueError:
+            continue
+
         insert_sect(title, ccn, dt, data)
 
 def get_datetime(date):
     return datetime.strptime(date, '%m/%d/%y')
 
-def show_section(title, ccn, dt, data):
-    date = dt.date()
-    out = str(title).strip() + " (CCN " + str(ccn).strip() + "): Limit "
-    out += str(data['seatlimit']) + ", Enrolled " + str(data['enrolled'])
-    out += ", Waitlist " + str(data['waitlist']) + " (" + str(date) + ")"
-    print out
-
 for dept in depts:
+    print "Department: {0}".format(dept)
     search_dept(dept)
