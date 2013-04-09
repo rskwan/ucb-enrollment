@@ -23,6 +23,11 @@ The contents of `requirements.txt`:
 
 ## Usage
 
+Initialize the SQLite3 database as `enrollment.db` using the schema in
+`enrollment.sql`:
+
+    sqlite3 enrollment.db < enrollment.sql
+
 Running `python getInfo.py` will get the information for the fall 2013 courses
 and store them in the database `enrollment.db`. `python api.py` will start
 Flask and provide access to an API for the data.
